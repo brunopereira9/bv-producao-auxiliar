@@ -274,7 +274,7 @@ for item in data[1:]:
     current_depth = level
 
 
-output_filename = generate_guid() + ".json"
+output_filename = "hierarchy_data/" + generate_guid() + ".json"
 
 
 with open(output_filename, 'w', encoding='utf-8') as json_file:
