@@ -212,9 +212,8 @@ def to_snake_case(text):
     # Remove espaços em branco do início e do fim do texto.
     text = text.strip()
 
-    # Remove caracteres especiais no final do texto, como ponto, exclamação, etc.
-    if text[-1] in ['_', '-', '.', '!', '?', ':', ';']:
-        text = text[:-1]
+    # Use uma expressão regular para remover caracteres especiais no final da string.
+    text = re.sub(r'[^\w\s]+$', '', text)
 
     # Converte o texto para letras minúsculas e substitui espaços por underscores.
     text = '_'.join(text.lower().split())
@@ -262,6 +261,7 @@ for item in data[1:]:
         category = replace_string(category)
         anchor = anchor_prefix + "_".join([node["category"] for node in current_level[1:]]) + "_" + category
         anchor = replace_string(anchor)
+        anchor = to_snake_case(anchor)
         new_node = {"title": title, "category": category, "anchor": anchor}
     else:
         new_node = {"title": title, "category": category, "children": []}
