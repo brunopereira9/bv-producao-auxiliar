@@ -201,9 +201,16 @@ import json
 import re
 from unidecode import unidecode
 import uuid
+import os
 
 def generate_guid():
     return str(uuid.uuid4())
+
+def get_output_name(site):
+    path = "hierarchy_data/" + site
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return path + "/" + generate_guid() + ".json"
 
 def to_snake_case(text):
     # Remove acentos do texto.
@@ -213,13 +220,13 @@ def to_snake_case(text):
     text = text.strip()
 
     # Use uma expressão regular para remover caracteres especiais no final da string.
-    text = re.sub(r'[^\w\s]+$', '', text)
+    text = re.sub(r'[^a-zA-Z0-9#\s]+$', '', text)
 
     # Converte o texto para letras minúsculas e substitui espaços por underscores.
     text = '_'.join(text.lower().split())
 
     # Remove qualquer caractere que não seja uma letra ou underscore.
-    text = re.sub(r'[^a-z_]', '', text)
+    text = re.sub(r'[^a-zA-Z0-9#\s_]', '', text)
 
     # Retorna o texto no formato snake_case.
     return text
@@ -240,7 +247,7 @@ current_level = [hierarchy_data]
 current_depth = -1
 
 # Define um prefixo para âncoras.
-anchor_prefix = "#Planta_Onca_Puma_"
+anchor_prefix = "#Planta_"
 
 # Itera sobre os itens da lista "data" (que deve ser definida em algum lugar).
 for item in data[1:]:
@@ -274,12 +281,13 @@ for item in data[1:]:
     current_depth = level
 
 
-output_filename = "hierarchy_data/" + generate_guid() + ".json"
+for item in hierarchy_data["children"][0:]:
 
+  output_filename = get_output_name(item["category"])
 
-with open(output_filename, 'w', encoding='utf-8') as json_file:
+  with open(output_filename, 'w', encoding='utf-8') as json_file:
     # Escreve o conteúdo JSON no arquivo com formatação.
-    json.dump(hierarchy_data["children"], json_file, ensure_ascii=False, indent=2)
+    json.dump([item], json_file, ensure_ascii=False, indent=2)
 
 
 print(f"O JSON foi salvo em {output_filename}")
